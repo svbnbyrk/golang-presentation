@@ -1,0 +1,56 @@
+# Ogren&Ogret GoLang 
+Let's Go! 
+22 Sep 2022
+
+Sevban Bayrak
+Software Developer, Sibercan
+github.com/svbnbyrk
+@svbnbyrk
+
+## What will we talk about?
+- The State of Go in Developer Ecosystem
+- Enter the gopher hole!
+- WTF's golang?
+- Strengths/Weaknesses
+- End 
+- Any Questions?
+
+.image img/agenda.png _ 400
+
+## The State of Go in Developer Ecosystem
+
+- This report presents the combined results of the JetBrains Developer Ecosystem Survey 2021.
+- 31,743 developers from 183 countries or regions helped this survey.
+ 
+## Do you plan to adopt / migrate to other languages in the next 12 months? If so, to which ones?
+
+.image img/adopt-or-migrate-other-language.png.
+
+## What types of software do you develop?
+
+.image img/what-types-of-software.png
+
+## For which platforms do you develop?
+
+.image img/platforms.png
+
+## Popularity of programming languages
+
+.image img/popularity-by-region.png
+
+## Enter the gopher hole!
+
+Istakozun gelişmesini tetikleyen ve büyümesini sağlayan şey, yaşadığı rahatsızlık ve strestir.
+
+.image img/matrix.png _ 500
+
+## WTF's GO?
+
+Go is an open source programming language that makes it easy to build simple, reliable, and efficient software.
+
+#History#
+
+- Started in _2007_
+- Announced in _November 2009_
+- Released *v1.0* in _March 2012_
+- Stable release: 1.19.1 / 6 September 2022
