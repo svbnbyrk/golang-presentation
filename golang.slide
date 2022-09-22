@@ -57,41 +57,13 @@ Go is an open source programming language that makes it easy to build simple, re
 - Memory-Managed (Garbage collector)
 - Go compiles directly to machine code
 - Fast compilation
-- Tool facilities
-- Powerfull standart library
+- Concurrency
+- Powerfull standart library/tool
 
 ## Weakness
 - Function Overloading
 - Inheritance
 - Error Handling
-
-
-: using packages (alias)
-: variable naming (exported & unexported)
-: variable definition & initialization
-: constants
-: type inference
-: zero values
-: function definition
-: multiple return values
-: string formatting
-
-## GO Tools
-
-.link https://pkg.go.dev/golang.org/x/tools#section-readme
-
-go test:
-
-- race to run Go race detector.
-- run to filter tests to run by regex and the -run flag: go test -run=FunctionName.
-- bench to run benchmarks.
-- cpuprofile cpu.out writes a CPU profile to the specified file before exiting.
-- memprofile mem.out writes a memory profile to the file after all tests have passed.
-- cover measures the percentage of lines of code that are executed while running a suite of tests. 
-
-## go test -race 
-
-.play code/tools/race.go /START OMIT/,/END OMIT/
 
 ## Variables
 
@@ -106,31 +78,6 @@ Shortcut of above (Infers type)
 msg := "Hello"
 ```
 Constants
-
-```go
-const Phi = 1.618
-```
-
-Constants can be character, string, boolean, or numeric values.
-
-See: [Constants](https://tour.golang.org/basics/15)
-
-## Variables
-
- Variable declaration
-
-```go
-var msg string
-msg = "Hello"
-```
-
-Shortcut of above (Infers type)
-
-```go
-msg := "Hello"
-```
-
-## Constants
 
 ```go
 const Phi = 1.618
@@ -181,7 +128,7 @@ Arrays:
 numbers := [...]int{0, 0, 0, 0, 0}
 ```
 
-Arrays have a fixed size.
+Arrays sabit boyutludur.
 
 Slices:
 
@@ -193,7 +140,7 @@ slice := []int{2, 3, 4}
 slice := []byte("Hello")
 ```
 
-Slices have a dynamic size, unlike arrays.
+Slices, Arrays gibi fakat dinamik boyutludur
 
 ## Pointers
 
@@ -216,7 +163,7 @@ a := new(int)
 *a = 234
 ```
 
-Pointers point to a memory location of a variable. Go is fully garbage-collected.
+Pointers değişkenin bellekteki konumunu işaret eder. Endişelenmeyin garbage collector işini yapıyor.
 
 See: [Pointers](https://tour.golang.org/moretypes/1)
 
@@ -254,11 +201,12 @@ if _, err := doThing(); err != nil {
 }
 ```
 
-`A Variables declared by the statement are only in scope until the end of the if.`
+`If bloğu içinde tanımlanan değişkenler o if bloğu içinde geçerli sayılıyor.`
 
 See: [If with a short statement](https://tour.golang.org/flowcontrol/6)
 
 ## Flow control
+Tüm flow control ifadeleri for döngüsünden türetilmiştir. 
 
 Switch:
 
@@ -320,7 +268,7 @@ myfunc := func() bool {
 }
 ```
 
-Functions are first class objects.
+Go dilinde fonksiyonlar birincil sınıf objelerdir.
 
 Multiple return types:
 
@@ -346,7 +294,7 @@ func split(sum int) (x, y int) {
 }
 ```
 
-By defining the return value names in the signature, a `return` (no args) will return variables with those names.
+Dönüş değerlerini fonksiyonun imzasında da belirtebiliriz.
 
 See: [Named return values](https://tour.golang.org/basics/7)
 
@@ -366,7 +314,7 @@ import (
 )
 ```
 
-Both are the same.
+İki gösterim de kullanılabilir.
 
 See: [Importing](https://tour.golang.org/basics/1)
 
@@ -389,13 +337,70 @@ func Hello () {
 }
 ```
 
-Exported names begin with capital letters.
+Büyük harfle başlayan adlar dışa aktarılmıştır.
 
 See: [Exported names](https://tour.golang.org/basics/3)
 
+## Error control
+
+Defer:
+
+```go
+func main() {
+  defer fmt.Println("Done")
+  fmt.Println("Working...")
+}
+```
+
+Defers running a function until the surrounding function returns.
+The arguments are evaluated immediately, but the function call is not ran until later.
+
+See: [Defer, panic and recover](https://blog.golang.org/defer-panic-and-recover)
+
+## Deferring functions
+
+```go
+func main() {
+  defer func() {
+    fmt.Println("Done")
+  }()
+  fmt.Println("Working...")
+}
+```
+
+Lambdas are better suited for defer blocks.
+
+```go
+func main() {
+  var d = int64(0)
+  defer func(d *int64) {
+    fmt.Printf("& %v Unix Sec\n", *d)
+  }(&d)
+  fmt.Print("Done ")
+  d = time.Now().Unix()
+}
+```
+
+The defer func uses current value of d, unless we use a pointer to get final value at end of main.
+
 ## Concurrency
 
-Goroutines:
+ “concurrency, birden fazla iş ile aynı anda ilgilenebilme becerisidir” diyebiliriz.
+
+ - Bir programı çalıştırdığınızda öncelikle belleğe yüklenir ve bir process olarak nitelendirilir. Process’ler kendi içlerinde bir ya da birden fazla Thread barındırabilirler.
+
+ Runtime Scheduler:
+
+ Tüm yükü mevcut işlemciler arasında eşit olarak paylaşır. Fakat çoğu dağıtılmış görev genellikle diğer görevlere bağlı. Bu nedenle, bazı işlemciler yeterince kullanılmamakta veya eşdeğer olarak, bazı işlemciler diğerlerinden daha fazla kullanılmaktadır. Bir goroutine bir görevdir fakat gorutineler bazen birbirinin devamı olarak çalışır. Go zamanlayıcı tarafından kullanılan iş çalma stratejisinde, yeterince kullanılmayan bir (mantıksal) işlemci, diğer işlemcilerden ek iş arar.
+
+## Goroutines:
+
+- Goroutine’ler Thread’lere göre daha az bilgi barındırdığından context-switch işleminde oluşan maliyet daha azdır.
+- sadece 2kB’dır, Thread 1mb
+- Goroutine’ler Go runtime içerisinde yer alan Go scheduler tarafından yönetilir.
+- Goroutine’ler kendi stack boyutlarını dinamik olarak çalışma anında büyütüp tekrar küçültebilirler.
+- Goroutine’ler işletim sistemi Thread’leri üzerinde çalışan yapılardır.
+
 
 ```go
 func main() {
@@ -491,51 +496,25 @@ func doOperation(wg *sync.WaitGroup, item string) {
 }
 ```
 
-A WaitGroup waits for a collection of goroutines to finish. The main goroutine calls Add to set the number of goroutines to wait for. The goroutine calls `wg.Done()` when it finishes.
+WaitGroup, bir goroutine koleksiyonunun bitmesini bekler. Ana goroutine, beklenecek goroutin sayısını ayarlamak için Ekle'yi çağırır. Goroutine, bittiğinde wg.Done() öğesini çağırır.
 See: [WaitGroup](https://golang.org/pkg/sync/#WaitGroup)
 
+##  Race Conditions
 
-## Error control
+Race Condition birden çok thread'in paylaşılan bir hafıza alanına aynı anda ulaşıp o alanı değiştirmesiyle meydana gelir. Race Condition'lar genellikle uygulamanın doğru çalışmasını bozdukları için bug olarak adlandırılırlar.
 
-Defer:
+## GO Tools
 
-```go
-func main() {
-  defer fmt.Println("Done")
-  fmt.Println("Working...")
-}
-```
+.link https://pkg.go.dev/golang.org/x/tools#section-readme
 
-Defers running a function until the surrounding function returns.
-The arguments are evaluated immediately, but the function call is not ran until later.
+go test:
 
-See: [Defer, panic and recover](https://blog.golang.org/defer-panic-and-recover)
-
-## Deferring functions
-
-```go
-func main() {
-  defer func() {
-    fmt.Println("Done")
-  }()
-  fmt.Println("Working...")
-}
-```
-
-Lambdas are better suited for defer blocks.
-
-```go
-func main() {
-  var d = int64(0)
-  defer func(d *int64) {
-    fmt.Printf("& %v Unix Sec\n", *d)
-  }(&d)
-  fmt.Print("Done ")
-  d = time.Now().Unix()
-}
-```
-
-The defer func uses current value of d, unless we use a pointer to get final value at end of main.
+- race to run Go race detector.
+- run to filter tests to run by regex and the -run flag: go test -run=FunctionName.
+- bench to run benchmarks.
+- cpuprofile cpu.out writes a CPU profile to the specified file before exiting.
+- memprofile mem.out writes a memory profile to the file after all tests have passed.
+- cover measures the percentage of lines of code that are executed while running a suite of tests. 
 
 ## Structs
 
@@ -556,10 +535,6 @@ func main() {
 }
 ```
 
-See: [Structs](https://tour.golang.org/moretypes/2)
-
-## Literals
-
 ```go
 v := Vertex{X: 1, Y: 2}
 ```
@@ -573,17 +548,14 @@ v := Vertex{1, 2}
 // Y is implicit
 v := Vertex{X: 1}
 ```
-
-You can also put field names.
-
-## Pointers to structs
+Pointers to structs:
 
 ```go
 v := &Vertex{1, 2}
 v.X = 2
 ```
 
-Doing `v.X` is the same as doing `(*v).X`, when `v` is a pointer.
+See: [Structs](https://tour.golang.org/moretypes/2)
 
 ## Methods
 
@@ -606,28 +578,9 @@ v := Vertex{1, 2}
 v.Abs()
 ```
 
-There are no classes, but you can define functions with _receivers_.
+GO da class yok fakat alıcılara receivers tanımlayabiliriz.
 
 See: [Methods](https://tour.golang.org/methods/1)
-
-## Mutation
-
-```go
-func (v *Vertex) Scale(f float64) {
-  v.X = v.X * f
-  v.Y = v.Y * f
-}
-```
-
-```go
-v := Vertex{6, 12}
-v.Scale(0.5)
-// `v` is updated
-```
-
-By defining your receiver as a pointer (`*Vertex`), you can do mutations.
-
-See: [Pointer receivers](https://tour.golang.org/methods/4)
 
 ## Interfaces
 
@@ -670,3 +623,4 @@ func main() {
   fmt.Printf("Type of r: %T, Area: %v, Perimeter: %v.", r, r.Area(), r.Perimeter())
 }
 ```
+
