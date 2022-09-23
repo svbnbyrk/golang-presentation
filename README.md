@@ -1,7 +1,7 @@
 # golang-presentation
 Sabanci Dx Yazilim gelistirme ekibi ogren&amp;ogret etkinligi golang sunumu 
 
-### Compiles for run
+### Using
 ``
 go get -u golang.org/x/tools/cmd/present
 ``
